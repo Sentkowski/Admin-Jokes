@@ -1,5 +1,8 @@
 import React, { useState, useEffect, useContext } from 'react';
-import './App.css';
+import './App.scss';
+import funpageAvatar from './funpage_avatar.jpg';
+import heartIcon from './heart-black.svg';
+
 const TimeContext = React.createContext({ progress: 0 });
 
 function App() {
@@ -10,11 +13,13 @@ function App() {
 
 function Feed() {
   const [postID, setPostID] = useState(196);
-  const [postsList, addPost] = useState([{
-    title: 'it works!',
-    text: 'coolcoolcoolcoolcoolcoolcoolcoolcoolcool',
-    date: 'Just now'
-  }]);
+  const [postsList, addPost] = useState([
+    // {
+    // title: 'it works!',
+    // text: 'coolcoolcoolcoolcoolcoolcoolcoolcoolcool',
+    // date: 'Just now'
+    // }
+  ]);
   const [followers, setFollowers] = useState(956);
   const [progress, setProgress] = useState(10);
   useEffect(() => {
@@ -49,11 +54,21 @@ function Feed() {
 
 function Post(props) {
   return (
-    <li key={props.title}>
-      <h2>{props.title}</h2>
-      <p>{props.text}</p>
+    <li className='post' key={props.title}>
+      <div className="post__container">
+        <header className="post__header">
+          <img src={funpageAvatar} className='post__avatar' alt="Admin's page avatar."/>
+          <h2 className='post__title'>{props.title}</h2>
+        </header>
+        <p className='post__text'>{props.text}</p>
       <ShowDate />
-      <ul>
+      <div className="post__reactions">
+        <p className="post__hearts-counter">13</p>
+        <img src={heartIcon} className='post__heart-icon' alt="Icon of a heart."/>
+        <p className="post__comments-counter">2 comments</p>
+      </div>
+      </div>
+      <ul className="post__comments-list">
         <Comment />
         <Comment />
       </ul>
@@ -62,10 +77,11 @@ function Post(props) {
 }
 
 function ShowDate() {
+  // eslint-disable-next-line
   const [datePublished, setDatePublished] = useState(useContext(TimeContext).progress); 
   const time = useContext(TimeContext).progress - datePublished;
   return (
-    <p>{formatDate(time)}</p>
+    <p className='post__date'>{formatDate(time)}</p>
   )
 
   function formatDate(time) {
@@ -86,15 +102,19 @@ function ShowDate() {
 function Comment() {
   const [comment, setComment] = useState(false);
   useEffect(() => {
-    fetch(`https://randomuser.me/api/?inc=name,picture`)
+    fetch(`https://randomuser.me/api/?inc=name,picture&nat=us,gb`)
       .then(res => res.json())
       .then(res => {
         setComment(res.results[0]);
       })
   }, []);
   return (!comment) ? (<div></div>) : (
-    <li key={comment.name.first + comment.name.last}>
-      <p>{comment.name.first + comment.name.last}</p>
+    <li className="comment" key={comment.name.first + comment.name.last}>
+      <header className='comment__header'>
+        <img className="comment__photo" alt="Commenter's avatar." src={comment.picture.thumbnail}/>
+        <p className="comment__name">{capFirstLetter(comment.name.first)} {capFirstLetter(comment.name.last)}</p>
+      </header>
+      <p className="comment__text">Haha, very funny!</p>
     </li>
   )
 }
@@ -136,7 +156,7 @@ function JokeOptions(props) {
       props.adjustFollowers(false, timePassed);
     }
     const newPost = {
-      title: props.postID + 1,
+      title: 'Joke #' + (props.postID + 1) + '!',
       text: jokesList[0].setup + ' ' + jokesList[jokesOrder[num]].punchline,
       date: 'Just now'
     };
@@ -156,6 +176,10 @@ function shuffle(array) {
     array[randomIndex] = temporaryValue;
   }
   return array;
+}
+
+function capFirstLetter(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
 export default App;

@@ -1,0 +1,146 @@
+$primary-color: #b2ebf2;
+$primary-color-light: #e5ffff;
+$primary-color-dark: #81b9bf;
+$secondary-color: #ff5722;
+$secondary-color-light: #ff8a50;
+$secondary-color-dark: #c41c00;
+
+$serif: 'Frank Ruhl Libre', serif;
+$sans: 'Varela Round', sans-serif;
+
+.post__container {
+  background-color: $primary-color;
+  position: relative;
+  padding: 8px;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.15), 0px 5px 5px 0px rgba(0,0,0,0.05);
+}
+
+
+.post__header {
+  display: flex;
+}
+
+.post__avatar {
+  height: 64px;
+  width: 64px;
+  margin-left: -8px;
+  margin-top: -8px;
+}
+
+.post__title {
+  font-size: 1.75rem;
+  font-family: $sans;
+  margin-left: 16px;
+  align-self: flex-end;
+  line-height: 1.2;
+}
+
+.post__text {
+  font-size: 1.125rem;
+  line-height: 1.2;
+  margin: 8px 8px 0;
+  font-family: $serif;
+}
+
+.post__date {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: 0.75rem;
+  font-family: $sans;
+  opacity: 0.75;
+}
+
+.post__reactions {
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translate(-50%, 100%);
+  display: flex;
+  padding: 4px 8px;
+  background-color: $primary-color;
+  border-radius: 0 0 8px 8px;
+  font-size: 1rem;
+  font-family: $sans;
+  box-shadow: 0px 2px 2px 0px rgba(0,0,0,0.15), 0px 5px 5px 0px rgba(0,0,0,0.05);
+
+  &::after {
+    z-index: -1;
+    content: "";
+    display: block;
+    position: absolute;
+    top: -0.5px;
+    right: -11.5px;
+    width: 12px;
+    height: 100%;
+    background-image: url("./counter-corner.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    filter: drop-shadow( );
+  }
+
+  &::before {
+    content: "";
+    display: block;
+    position: absolute;
+    top: -0.5px;
+    left: -11.5px;
+    width: 12px;
+    height: 100%;
+    background-image: url("./counter-corner.svg");
+    background-size: contain;
+    background-repeat: no-repeat;
+    transform: scaleX(-1)
+  }
+}
+
+.post__heart-icon {
+  width: 16px;
+  height: 16px;
+  margin-left: 4px;
+  margin-right: 8px;
+}
+
+.post__comments-list {
+  padding-top: 16px;
+  background-color: $primary-color-light;
+  overflow: hidden;
+}
+
+.comment__header {
+  display: flex;
+}
+
+.comment__photo {
+  width: 48px;
+  height: 48px;
+  border-right: 2px solid $secondary-color-light;
+}
+
+.comment__name {
+  font-family: $sans;
+  align-self: flex-end;
+  font-size: 1rem;
+  line-height: 1.2;
+  margin-left: 8px;
+}
+
+.comment__text {
+  position: relative;
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 8px;
+  font-family: $serif;
+
+  &::after {
+    content: "";
+    display: block;
+    width: 32px;
+    height: 16px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    border-bottom: 1px solid $secondary-color-light;
+    border-right: 1px solid $secondary-color-light;
+  }
+}
