@@ -3,6 +3,7 @@ import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './App.scss';
 import funpageAvatar from './funpage_avatar.jpg';
 import heartIcon from './heart-black.svg';
+import arrow from './arrow.svg';
 
 const TimeContext = React.createContext({ progress: 0 });
 
@@ -22,6 +23,7 @@ function Feed() {
     // }
   ]);
   const [followers, setFollowers] = useState(956);
+  const [history, setHistory] = useState([50, 25, 50, 25, 50]);
   const [progress, setProgress] = useState(10);
   useEffect(() => {
     const interval = setInterval(() => {
@@ -34,7 +36,7 @@ function Feed() {
   return (
     <main>
       <TimeContext.Provider value={{progress: progress}}>
-        <FunpageBar followers={followers} />
+        <FunpageBar followers={followers} history={history} />
         <TransitionGroup component='ul'>
             {postsList.map(post => Post(post))}
         </TransitionGroup>
@@ -47,8 +49,10 @@ function Feed() {
     const newFollowers = Math.max(Math.round(100 - 0.005 * timePassed), 0);
     if (isRight) {
       setFollowers(followers + newFollowers);
+      setHistory([...history, newFollowers].splice(1,6));
     } else {
       setFollowers(followers - newFollowers);
+      setHistory([...history, newFollowers * -1].splice(1,6));
     }
   }
 }
@@ -61,7 +65,7 @@ function FunpageBar(props) {
         <h1 className="funpage-bar__name">The funniest Funpage</h1>
         <div className="funpage-bar__bottom-container">
           <p className="funpage-bar__admin-note">Welcome, Admin</p>
-          <p className="funpage-bar__trending-note">Trending!</p>
+          <TrendingStatus history={props.history} />
           <p className="funpage-bar__followers-number">{props.followers}</p>
           <img src={heartIcon} className="funpage-bar__followers-icon" alt="Icon of a heart."/>
         </div>
@@ -70,14 +74,70 @@ function FunpageBar(props) {
   )
 }
 
+function TrendingStatus(props) {
+  const [status, setStatus] = useState({
+    min: 101,
+    max: 300,
+    desc: "Trending!",
+    class: 'funpage-bar__trending-note--good',
+  });
+  useEffect(() => {
+    const balance = props.history.reduce((acc, val) => acc + val);
+    const statusTable = [
+      {
+        min: -Infinity,
+        max: -250,
+        desc: "Going down!",
+        class: 'very-bad',
+      },
+      {
+        min: -249,
+        max: -100,
+        desc: "Losing followers",
+        class: 'bad',
+      },
+      {
+        min: -99,
+        max: 100,
+        desc: "",
+        class: 'neutral',
+      },
+      {
+        min: 101,
+        max: 300,
+        desc: "Trending!",
+        class: 'good',
+      },
+      {
+        min: 301,
+        max: Infinity,
+        desc: "Going viral!",
+        class: 'very-good',
+      },
+    ]
+    for (let range of statusTable) {
+      if (balance >= range.min && balance <= range.max) {
+        setStatus(range);
+      }
+    }
+  }, [props.history]);
+  return (
+    <>
+      <p className={"funpage-bar__trending-note funpage-bar__trending-note--" + status.class}>{status.desc}</p>
+      <img src={arrow} alt="An icon of arrow indicating if the funpage is trending." className={"funpage-bar__trending-icon funpage-bar__trending-icon--" + status.class}/>
+    </>
+  )
+}
+
 function Post(props) {
   return (
-    <CSSTransition key={props.title} in={true} timeout={200} classNames="post">
+    <CSSTransition key={props.title} in={true} timeout={400} classNames="post">
       <li className='post' key={props.title}>
         <div className="post__container">
           <header className="post__header">
             <img src={funpageAvatar} className='post__avatar' alt="Admin's page avatar."/>
             <h2 className='post__title'>{props.title}</h2>
+            <Hashtags text={props.text} />
           </header>
           <p className='post__text'>{props.text}</p>
         <ShowDate />
@@ -88,11 +148,22 @@ function Post(props) {
         </div>
         </div>
         <TransitionGroup className="post__comments-list" component='ul'>
-          <Comment />
-          <Comment />
+          <Comment order={1}/>
+          <Comment order={2}/>
         </TransitionGroup>
       </li>
     </CSSTransition>
+  )
+}
+
+function Hashtags(props) {
+  const [hashtags, setHashtags] = useState([]);
+  useEffect(() => {
+    const twoLongestWords = props.text.match(/\w+/g).sort((a, b) => b.length - a.length).slice(0, 2);
+    setHashtags(twoLongestWords.map(word => "#" + word.toLowerCase()).join(" "));
+  }, [props.text]);
+  return (
+    <p className="post__hashtags">{hashtags}</p>
   )
 }
 
@@ -119,17 +190,21 @@ function ShowDate() {
   }
 }
 
-function Comment() {
+function Comment(props) {
   const [comment, setComment] = useState(false);
+  const [creationTime, setCreationTime] = useState(Date.now());
   useEffect(() => {
+    setCreationTime(Date.now());
     fetch(`https://randomuser.me/api/?inc=name,picture&nat=us,gb`)
       .then(res => res.json())
       .then(res => {
-        setComment(res.results[0]);
-      })
+        setTimeout(() => {
+          setComment(res.results[0]);
+        }, Math.max(creationTime + props.order * 500 - Date.now(), 0), res)
+      });
   }, []);
   return (!comment) ? (<div></div>) : (
-    <CSSTransition key={comment.name.first + comment.name.last} in={true} timeout={200} classNames="comment">
+    <CSSTransition key={comment.name.first + comment.name.last} in={true} timeout={400} classNames="comment">
       <li className="comment" key={comment.name.first + comment.name.last}>
         <img className="comment__photo" alt="Commenter's avatar." src={comment.picture.thumbnail}/>
         <div className='comment__texts-container'>
@@ -146,22 +221,25 @@ function JokeOptions(props) {
   const [jokesOrder, setJokesOrder] = useState([]);
   const [chosenJoke, setChosenJoke] = useState(false);
   const [ready, setReady] = useState(false);
-  const renderedAt = Date.now();
+  const [renderedAt, setRenderedAt] = useState();
+  const [transitionTime, setTransitionTime] = useState(Date.now());
 
   useEffect(() => {
     fetch(`https://official-joke-api.appspot.com/random_ten`)
       .then(res => res.json())
-      .then(res => {
+      .then(res => {setTimeout((res) => {
         setJokesOrder(shuffle([0, 1, 2, 3, 4]));
         setJokes(res);
         setReady(true);
         jokesMasonry(document.querySelectorAll(".new-post__punchline"));
-      })
+        setRenderedAt(Date.now());
+      }, Math.max(transitionTime + 300 - Date.now(), 0), res)
+    })
   }, [props.postID]);
 
   return (
     <section className={ready ? "new-post" : "new-post new-post--hidden"}>
-      {ready &&
+      {(jokesList.length > 1) &&
         <>
           <p className="new-post__setup">{jokesList[0].setup}</p>
           <ul  className="new-post__punchlines-list">
@@ -201,8 +279,14 @@ function JokeOptions(props) {
       date: 'Just now'
     };
     props.addPost([newPost, ...props.postsList]);
-    props.setPostID(props.postID + 1);
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
     setReady(false);
+    setTransitionTime(Date.now());
+    props.setPostID(props.postID + 1);
   }
 }
 

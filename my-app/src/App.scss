@@ -61,6 +61,7 @@ body {
   font-family: $sans;
   opacity: 0.5;
   margin-right: auto;
+  flex-shrink: 0;
 
   @media only screen and (max-width: 359px) {
     display: none;
@@ -71,6 +72,58 @@ body {
   font-size: 0.875rem;
   font-family: $sans;
   align-self: flex-end;
+  text-align: right;
+  margin-left: 4px;
+}
+
+.funpage-bar__trending-note--very-bad {
+  color: $secondary-color-dark;
+}
+
+.funpage-bar__trending-note--bad {
+  color: $secondary-color-dark;
+}
+
+.funpage-bar__trending-note--good {
+  color: $secondary-color-dark;
+}
+
+.funpage-bar__trending-note--very-good {
+  color: $secondary-color-dark;
+}
+
+.funpage-bar__trending-icon {
+  position: absolute;
+  z-index: -1;
+  width: 96px;
+  height: 96px;
+  right: 32px;
+  bottom: -16px;
+  opacity: 0.10;
+  transition: transform 0.2s;
+}
+
+.funpage-bar__trending-icon--bad {
+  transform: scale(-1, -1);
+  animation: puls 1s alternate-reverse infinite; 
+}
+
+.funpage-bar__trending-icon--neutral {
+  transform: rotate(15deg);
+}
+
+.funpage-bar__trending-icon--very-bad {
+  transform: scale(-1, -1);
+  animation: pulse 1s alternate-reverse infinite; 
+}
+
+.funpage-bar__trending-icon--very-good {
+  animation: pulse 1s alternate-reverse infinite; 
+}
+
+@keyframes pulse {
+  from {opacity: 0.1;}
+  to {opacity: 0.2;}
 }
 
 .funpage-bar__followers-number {
@@ -116,6 +169,17 @@ body {
   margin-left: 16px;
   align-self: flex-end;
   line-height: 1.2;
+}
+
+.post__hashtags {
+  position: absolute;
+  left: 72px;
+  top: 8px;
+  font-size: 0.75rem;
+  font-family: $sans;
+  opacity: 0.75;
+  color: $secondary-color-dark;
+  max-width: calc(100% - 150px);
 }
 
 .post__text {
@@ -217,7 +281,7 @@ body {
   font-size: 1.125rem;
   line-height: 1.2;
   margin-left: 16px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   font-family: $serif;
 }
 
@@ -228,13 +292,13 @@ body {
   bottom: 0;
   background-color: rgba(255,255,255, 0.95);
   border-top: 2px solid $primary-color-dark;
-  transition: transform 0.1s;
+  transition: transform 0.3s;
   transform: translateY(0%);
 }
 
 .new-post--hidden {
   transform: translateY(100%);
-  transition: transform 0.1s;
+  transition: transform 0.3s;
 }
 
 .new-post__setup {
@@ -329,15 +393,16 @@ body {
 .post-enter-active {
   opacity: 1;
   transform: scale(1);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 400ms, transform 400ms;
 }
 
 .comment-enter {
   opacity: 0;
   transform: scale(0.9) translate(-10px, 10px);
+  transform-origin: bottom left;
 }
 .comment-enter-active {
   opacity: 1;
   transform: scale(1) translateX(0);
-  transition: opacity 300ms, transform 300ms;
+  transition: opacity 400ms, transform 400ms;
 }
