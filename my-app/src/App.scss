@@ -248,7 +248,6 @@ body {
   margin: 0 5% 16px 6%;
   padding: 16px 0 0 4px;
   overflow: hidden;
-  border-left: 2px solid $secondary-color-light;
 }
 
 .comment {
@@ -291,6 +290,8 @@ body {
   z-index: 1;
   bottom: 0;
   background-color: rgba(255,255,255, 0.95);
+  background-image: url("./new-post-bg.svg");
+  background-size: 50px;
   border-top: 2px solid $primary-color-dark;
   transition: transform 0.3s;
   transform: translateY(0%);
