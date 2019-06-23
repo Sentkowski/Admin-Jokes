@@ -8,6 +8,15 @@ $secondary-color-dark: #c41c00;
 $serif: 'Frank Ruhl Libre', serif;
 $sans: 'Varela Round', sans-serif;
 
+
+html {
+  font-size: 16px;
+  
+  @media only screen and (min-width: 1000px) {
+    font-size: 18px;
+  }
+}
+
 body {
   background-color: $primary-color-light;
   background-image: url("bg.svg");
@@ -15,6 +24,11 @@ body {
   background-attachment: fixed;
   padding-top: 80px;
   padding-bottom: 250px;
+
+  @media only screen and (min-width: 1000px) {
+    padding-bottom: 150px;
+    background-size: 750px;
+  }
 }
 
 .funpage-bar {
@@ -23,7 +37,7 @@ body {
   top: 0;
   left: 0;
   height: 64px;
-  width: 100vw;
+  width: 100%;
   display: flex;
   background-color: $primary-color-dark;
   box-shadow: 0px 1px 5px 0px rgba(7, 26, 32, 0.20), 0px 5px 15px 0px rgba(7, 26, 32, 0.05);
@@ -101,6 +115,10 @@ body {
   bottom: -16px;
   opacity: 0.10;
   transition: transform 0.2s;
+
+  @media only screen and (min-width: 600px) {
+    right: 168px;
+  }
 }
 
 .funpage-bar__trending-icon--bad {
@@ -139,6 +157,13 @@ body {
   width: 32px;
   height: 32px;
   align-self: flex-end;
+}
+
+.posts-list {
+  @media only screen and (min-width: 600px) {
+    max-width: 600px;
+    margin: auto;
+  }
 }
 
 .post__container {
@@ -295,6 +320,15 @@ body {
   border-top: 2px solid $primary-color-dark;
   transition: transform 0.3s;
   transform: translateY(0%);
+
+  @media only screen and (min-width: 1000px) {
+    width: 700px;
+    left: calc(50% - 350px);
+    border-radius: 8px 8px 0 0;
+    border-left: 2px solid $primary-color-dark;
+    border-right: 2px solid $primary-color-dark;
+    background-size: 75px;
+  }
 }
 
 .new-post--hidden {
@@ -329,6 +363,10 @@ body {
   border-radius: 8px;
   background-color: white;
   transition: border 0.2s, background-color 0.2s;
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 .new-post__punchlines-button--chosen {
@@ -353,9 +391,14 @@ body {
   transition: color 0.1s, transform 0.1s;
   transform-origin: bottom center;
 
+  &:hover {
+    cursor: pointer;
+  }
+
   &:disabled {
     color: black;
     transform: scale(1);
+    cursor: auto;
   }
 
   &::before {

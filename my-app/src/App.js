@@ -22,14 +22,14 @@ const GOOD_COMMENTS = [
   "You should write a book with all these jokes. :)",
   "If I could tag here, I would tag my whole family to make them see this gem",
   "why is this so funny? am i getting old?",
-  "mind if i steal it ? >_>",
+  "so good, mind if i steal it ? >_>",
   "im not even asking how you came up with this one ;p keep it up",
   "you deserve more hearts",
   "I would give you two hearts if I could :*",
   "im glad i found this funpage",
   "ahahaha :D",
   "Didn't see that coming!",
-  "You should teach stand-up or something",
+  "You should give stand-up courses!",
   "Always happy when a good joke pops up in my feed, thank you",
   "more more more more ples",
   "Pure gold.",
@@ -100,7 +100,7 @@ function Feed() {
     <main>
       <TimeContext.Provider value={{progress: progress}}>
         <FunpageBar followers={followers} history={history} />
-        <TransitionGroup component='ul'>
+        <TransitionGroup className="posts-list" component='ul'>
             {postsList.map(post => Post({...post, setCommentsCount, commentsCount, followers}))}
         </TransitionGroup>
         <JokeOptions postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers} />
@@ -281,7 +281,7 @@ function Comment(props) {
   const [commentText, setCommentText] = useState("");
   useEffect(() => {
     if (props.order === 2 && Math.random() > 0.5) {
-      return null;
+      return undefined;
     }
     setCreationTime(Date.now());
     fetch(`https://randomuser.me/api/?inc=name,picture&nat=us,gb`)
@@ -387,6 +387,7 @@ function jokesMasonry(elems) {
     const newLine = createLine(elemsArr, [], colWidth)[1];
     for (let i = 0; i < newLine.length; i++, counter++) {
       newLine[i].style.order = counter;
+      newLine[i].children[0].setAttribute("tabindex", counter + 1);
       elemsArr = elemsArr.filter(item => item !== newLine[i])
     }
   }
@@ -398,7 +399,7 @@ function createLine(allElems, combined, max) {
   for (let otherEl of allElems) {
     if (combined.indexOf(otherEl) === -1) {
       const newComb = [...combined, otherEl]
-      const newWidth = newComb.reduce((acc, currEl) => acc + currEl.offsetWidth + 8 , 0);
+      const newWidth = newComb.reduce((acc, currEl) => acc + currEl.offsetWidth + 8, -8);
       if (newWidth < max) {
         const results = createLine(allElems, newComb, max);
         posWidths.push(results[0]);
@@ -452,7 +453,7 @@ function fetchJokes() {
 function createJokesList(json) {
   let jokes = [];
   for (let joke of json) {
-    let jokeSplit = joke.joke.match( /[^\.!\?]+[\.!\?]+/g );
+    let jokeSplit = joke.joke.match( /[^.!?]+[.!?]+/g );
     if (jokeSplit && jokeSplit.length === 2) {
       if (jokes.push({setup: jokeSplit[0], punchline: jokeSplit[1]}) === 5) {
         break;
