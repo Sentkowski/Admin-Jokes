@@ -1,13 +1,15 @@
-$primary-color: #b2ebf2;
-$primary-color-light: #e5ffff;
-$primary-color-dark: #81b9bf;
-$secondary-color: #ff5722;
-$secondary-color-light: #ff8a50;
-$secondary-color-dark: #c41c00;
+$primary-color: hsl(186.6, 71.1, 82.4);
+$primary-color-light: hsl(180, 100, 94.9);
+$primary-color-dark: hsl(185.8, 32.6, 62.7);
+$secondary-color: hsl(14.4, 100, 56.7);
+$secondary-color-light: hsl(19.9, 100, 65.7);
+$secondary-color-dark: hsl(8.6, 100, 38.4);
+$heading-color: hsl(186, 20%, 20%);
+$text-color: hsl(186, 14%, 14%);
+$secondary-text-color: hsl(186, 30%, 30%);
 
 $serif: 'Frank Ruhl Libre', serif;
 $sans: 'Varela Round', sans-serif;
-
 
 html {
   font-size: 16px;
@@ -21,7 +23,6 @@ body {
   background-color: $primary-color-light;
   background-image: url("bg.svg");
   background-size: 250px;
-  background-attachment: fixed;
   padding-top: 80px;
   padding-bottom: 250px;
 
@@ -35,18 +36,28 @@ body {
   position: fixed;
   z-index: 1;
   top: 0;
-  left: 0;
+  left: 50%;
   height: 64px;
   width: 100%;
+  max-width: 800px;
   display: flex;
   background-color: $primary-color-dark;
   box-shadow: 0px 1px 5px 0px rgba(7, 26, 32, 0.20), 0px 5px 15px 0px rgba(7, 26, 32, 0.05);
+  transform: translateX(-50%);
+
+  @media only screen and (min-width: 1000px) {
+    border-radius: 0 0 8px 8px;
+  }
 }
 
 .funpage-bar__avatar {
   width: 64px;
   height: 100%;
   flex-shrink: 0;
+
+  @media only screen and (min-width: 1000px) {
+    border-bottom-left-radius: 8px;
+  }
 }
 
 .funpage-bar__texts-container {
@@ -68,14 +79,15 @@ body {
   font-size: 1rem;
   font-family: $sans;
   line-height: 1.2;
+  color: $heading-color;
 }
 
 .funpage-bar__admin-note {
   font-size: 0.875rem;
   font-family: $sans;
-  opacity: 0.5;
   margin-right: auto;
   flex-shrink: 0;
+  color: $heading-color;
 
   @media only screen and (max-width: 359px) {
     display: none;
@@ -115,10 +127,6 @@ body {
   bottom: -16px;
   opacity: 0.10;
   transition: transform 0.2s;
-
-  @media only screen and (min-width: 600px) {
-    right: 168px;
-  }
 }
 
 .funpage-bar__trending-icon--bad {
@@ -150,6 +158,7 @@ body {
   align-self: flex-end;
   margin-left: 8px;
   margin-right: 36px;
+  color: $heading-color;
 }
 
 .funpage-bar__followers-icon {
@@ -194,16 +203,16 @@ body {
   margin-left: 16px;
   align-self: flex-end;
   line-height: 1.2;
+  color: $heading-color;
 }
 
 .post__hashtags {
   position: absolute;
-  left: 72px;
+  left: 80px;
   top: 8px;
   font-size: 0.75rem;
   font-family: $sans;
-  opacity: 0.75;
-  color: $secondary-color-dark;
+  color: $secondary-text-color;
   max-width: calc(100% - 150px);
 }
 
@@ -212,6 +221,7 @@ body {
   line-height: 1.2;
   margin: 8px 8px 0;
   font-family: $serif;
+  color: $text-color;
 }
 
 .post__date {
@@ -220,7 +230,7 @@ body {
   right: 8px;
   font-size: 0.75rem;
   font-family: $sans;
-  opacity: 0.75;
+  color: $secondary-text-color;
 }
 
 .post__reactions {
@@ -233,6 +243,7 @@ body {
   border-radius: 0 0 8px 8px;
   font-size: 1rem;
   font-family: $sans;
+  color: $text-color;
 
   &::after {
     content: "";
@@ -270,14 +281,38 @@ body {
 }
 
 .post__comments-list {
-  margin: 0 5% 16px 6%;
+  margin: 0 5% 64px 6%;
   padding: 16px 0 0 4px;
-  overflow: hidden;
 }
 
 .comment {
+  position: relative;
   display: flex;
   margin: 16px 0;
+
+  &:first-child::before {
+    content: "";
+    position: absolute;
+    top: -10px;
+    left: -25px;
+    width: 20px;
+    height: 15px;
+    background-image: url("./quot_marks.svg");
+    background-size: cover;
+    opacity: 0.5;
+  }
+  &:last-child::after {
+    content: "";
+    position: absolute;
+    bottom: 0px;
+    right: 20px;
+    width: 20px;
+    height: 15px;
+    background-image: url("./quot_marks.svg");
+    background-size: cover;
+    transform: scale(-1, -1);
+    opacity: 0.5;
+  }
 }
 
 .comment__texts-container {
@@ -298,6 +333,7 @@ body {
   font-size: 0.875rem;
   line-height: 1.2;
   margin-left: 8px;
+  color: $text-color;
 }
 
 .comment__text {
@@ -307,6 +343,7 @@ body {
   margin-left: 16px;
   margin-bottom: 4px;
   font-family: $serif;
+  color: $text-color;
 }
 
 .new-post {
@@ -321,7 +358,7 @@ body {
   transition: transform 0.3s;
   transform: translateY(0%);
 
-  @media only screen and (min-width: 1000px) {
+  @media only screen and (min-width: 700px) {
     width: 700px;
     left: calc(50% - 350px);
     border-radius: 8px 8px 0 0;
@@ -340,6 +377,7 @@ body {
   margin: 8px 8px 4px 8px;
   font-family: $serif;
   font-size: 1.125rem;
+  color: $text-color;
 }
 
 .new-post__punchlines-list {
@@ -363,6 +401,7 @@ body {
   border-radius: 8px;
   background-color: white;
   transition: border 0.2s, background-color 0.2s;
+  color: $text-color;
 
   &:hover {
     cursor: pointer;
@@ -396,7 +435,7 @@ body {
   }
 
   &:disabled {
-    color: black;
+    color: $heading-color;
     transform: scale(1);
     cursor: auto;
   }

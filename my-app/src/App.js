@@ -294,7 +294,7 @@ function Comment(props) {
         }, Math.max(creationTime + 1000 + props.order * 500 - Date.now(), 0), res)
       });
   }, []);
-  return (!comment) ? (<div></div>) : (
+  return (!comment) ? (null) : (
     <CSSTransition key={comment.name.first + comment.name.last} in={true} timeout={400} classNames="comment">
       <li className="comment" key={comment.name.first + comment.name.last}>
         <img className="comment__photo" alt="Commenter's avatar." src={comment.picture.thumbnail}/>
