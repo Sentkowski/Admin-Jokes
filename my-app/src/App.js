@@ -78,11 +78,11 @@ function App() {
 function Feed() {
   const [postID, setPostID] = useState(giveRandom(100, 200));
   const [postsList, addPost] = useState([
-    // {
-    // title: 'it works!',
-    // text: 'coolcoolcoolcoolcoolcoolcoolcoolcoolcool',
-    // date: 'Just now'
-    // }
+    {
+      title: 'Welcome!',
+      text: "So this is your kingdom. You remember the deal, right? 2000 followers in 2 weeks and you're hired. You better be really good at these memes.",
+      date: 'Just now'
+    }
   ]);
   const [commentsCount, setCommentsCount] = useState({});
   const [followers, setFollowers] = useState(956);
@@ -381,7 +381,7 @@ function JokeOptions(props) {
 
 function jokesMasonry(elems) {
   let elemsArr = Array.from(elems)
-  const colWidth = document.querySelector(".new-post__punchlines-list").offsetWidth + 8;
+  const colWidth = document.querySelector(".new-post__punchlines-list").offsetWidth;
   let counter = 0;
   while (elemsArr.length > 0) {
     const newLine = createLine(elemsArr, [], colWidth)[1];
@@ -399,8 +399,8 @@ function createLine(allElems, combined, max) {
   for (let otherEl of allElems) {
     if (combined.indexOf(otherEl) === -1) {
       const newComb = [...combined, otherEl]
-      const newWidth = newComb.reduce((acc, currEl) => acc + currEl.offsetWidth + 8, -8);
-      if (newWidth < max) {
+      const newWidth = newComb.reduce((acc, currEl) => acc + currEl.offsetWidth, 0);
+      if (newWidth <= max) {
         const results = createLine(allElems, newComb, max);
         posWidths.push(results[0]);
         combinations.push(results[1]);
@@ -410,7 +410,7 @@ function createLine(allElems, combined, max) {
     }
   };
   if (combinations.length === 0) {
-    return [combined.reduce((acc, currEl) => acc + currEl.offsetWidth + 8, 0), combined];
+    return [combined.reduce((acc, currEl) => acc + currEl.offsetWidth, 0), combined];
   } else {
     return [Math.max(...posWidths), combinations[posWidths.indexOf(Math.max(...posWidths))]];
   }
