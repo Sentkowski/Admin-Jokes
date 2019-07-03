@@ -77,17 +77,12 @@ function App() {
 
 function Feed() {
   const [postID, setPostID] = useState(giveRandom(100, 200));
-  const [postsList, addPost] = useState([
-    {
-      title: 'Welcome!',
-      text: "So this is your kingdom. You remember the deal, right? 2000 followers in 2 weeks and you're hired. You better be really good at these memes.",
-      date: 'Just now'
-    }
-  ]);
+  const [postsList, addPost] = useState([]);
   const [commentsCount, setCommentsCount] = useState({});
-  const [followers, setFollowers] = useState(956);
-  const [history, setHistory] = useState([50, 25, 50, 25, 50]);
+  const [followers, setFollowers] = useState(0);
+  const [history, setHistory] = useState([0, 0, 0, 0, 0]);
   const [progress, setProgress] = useState(10);
+  const [gameStarted, startGame] = useState(false);
   useEffect(() => {
     const interval = setInterval(() => {
       setProgress(progress => progress + 1);
@@ -99,11 +94,16 @@ function Feed() {
   return (
     <main>
       <TimeContext.Provider value={{progress: progress}}>
-        <FunpageBar followers={followers} history={history} />
-        <TransitionGroup className="posts-list" component='ul'>
+        <FunpageBar followers={followers} gameStarted={gameStarted} history={history} />
+        <CSSTransition in={!gameStarted} timeout={200} classNames="welcome-message">
+          <WelcomeMessage startGame={startGame} />
+        </CSSTransition>
+        {gameStarted && <>
+          <TransitionGroup className="posts-list" component='ul'>
             {postsList.map(post => Post({...post, setCommentsCount, commentsCount, followers}))}
-        </TransitionGroup>
-        <JokeOptions postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers} />
+          </TransitionGroup>
+          <JokeOptions postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers}/>
+        </> }
       </TimeContext.Provider>
     </main>
   );
@@ -114,8 +114,10 @@ function Feed() {
       setFollowers(followers + newFollowers);
       setHistory([...history, newFollowers].splice(1,5));
     } else {
-      setFollowers(followers - newFollowers);
-      setHistory([...history, newFollowers * -1].splice(1,5));
+      const balance = (followers - newFollowers >= 0) ? followers - newFollowers : 0;
+      
+      setFollowers(balance);
+      setHistory([...history, (balance > 0) ? newFollowers * -1 : 0].splice(1,5));
     }
   }
 }
@@ -127,13 +129,38 @@ function FunpageBar(props) {
       <div className="funpage-bar__texts-container">
         <h1 className="funpage-bar__name">The funniest Funpage</h1>
         <div className="funpage-bar__bottom-container">
-          <p className="funpage-bar__admin-note">Welcome, Admin</p>
+          <p className="funpage-bar__admin-note">Hello, Admin</p>
           <TrendingStatus history={props.history} />
-          <p className="funpage-bar__followers-number"><CountUp duration={3} start={props.followers - props.history[4]} end={props.followers} /></p>
+          <p className="funpage-bar__followers-number">{props.gameStarted ? <CountUp duration={3} start={(props.followers >= 0) ? props.followers - props.history[4] : 0} end={props.followers} /> : props.followers}</p>
           <img src={heartIcon} className="funpage-bar__followers-icon" alt="Icon of a heart."/>
         </div>
       </div>
     </header>
+  )
+}
+
+function WelcomeMessage(props) {
+  return (
+    <section className="welcome-message">
+      <div className="welcome-message__container">
+        <h2 className="welcome-message__heading">Welcome!</h2>
+        <p className="welcome-message__text">So this is your kingdom. We've set things up for you, but if you wish, <span className="useful-text">you can change this avatar – tap on it</span>.</p>
+        <p className="welcome-message__text welcome-message__text--last">Remember the deal, right?</p>
+      </div>
+      <ul className="welcome-message__conditions-list">
+        <li className="welcome-message__condition">
+          <p className="welcome-message__condition-text">Get us to 2000 followers and you're hired.</p>
+        </li>
+        <li className="welcome-message__condition">
+          <p className="welcome-message__condition-text">Guess what happens if you leave us with&nbsp;0...</p>
+        </li>
+        <li className="welcome-message__condition">
+          <p className="welcome-message__condition-text">You have 2 weeks.</p>
+        </li>
+      </ul>
+      <ul></ul>
+      <button onClick={() => props.startGame(true)} className="welcome-message__start-button">Let the joking begin</button>
+    </section>
   )
 }
 
@@ -295,7 +322,7 @@ function Comment(props) {
       });
   }, []);
   return (!comment) ? (null) : (
-    <CSSTransition key={comment.name.first + comment.name.last} in={true} timeout={400} classNames="comment">
+    <>
       <li className="comment" key={comment.name.first + comment.name.last}>
         <img className="comment__photo" alt="Commenter's avatar." src={comment.picture.thumbnail}/>
         <div className='comment__texts-container'>
@@ -303,7 +330,7 @@ function Comment(props) {
           <p className="comment__name">{capFirstLetter(comment.name.first)} {capFirstLetter(comment.name.last)}</p>
         </div>
       </li>
-    </CSSTransition>
+    </>
   )
 }
 
