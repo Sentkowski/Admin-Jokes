@@ -4,7 +4,6 @@ import CountUp from 'react-countup';
 import './App.scss';
 import funpageAvatar from './funpage_avatar.jpg';
 import heartIcon from './heart-black.svg';
-import arrow from './arrow.svg';
 
 const TimeContext = React.createContext({ progress: 0 });
 
@@ -76,50 +75,132 @@ function App() {
 }
 
 function Feed() {
+  const [progress, setProgress] = useState(0);
+  const [randomUsers, setRandomUsers] = useState([]);
+  const [fetchingUsers, setFetchingUsers] = useState(false);
   const [postID, setPostID] = useState(giveRandom(100, 200));
   const [postsList, addPost] = useState([]);
   const [commentsCount, setCommentsCount] = useState({});
   const [followers, setFollowers] = useState(0);
   const [history, setHistory] = useState([0, 0, 0, 0, 0]);
-  const [progress, setProgress] = useState(10);
   const [gameStarted, startGame] = useState(false);
+  const [jokesList, setJokesList] = useState([]);
+  const [fetchingJokes, setFetchingJokes] = useState(false);
+
   useEffect(() => {
-    const interval = setInterval(() => {
-      setProgress(progress => progress + 1);
-    }, 2000);
-    return () => {
-      clearInterval(interval);
-    };
-  }, []);
+    if (jokesList.length <= 10 && !fetchingJokes) {
+      setFetchingJokes(true);
+      fetchJokes()
+        .then(res => {
+          setJokesList([...jokesList, ...res]);
+          setFetchingJokes(false);
+        })
+        .catch(() => {
+          setJokesList([
+            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Restart and hope for better luck."},
+            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Blame the guy who made it."},
+            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Let the guy who made it know that there is a problem! (recommended)."},
+            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Choose this option and try to get followers..."},
+            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Or choose this one. Each gives you 20% chance of being right!"}
+          ]);
+          setFetchingJokes(false);
+        });
+    }
+  }, [jokesList]);
+
+  useEffect(() => {
+    if (randomUsers.length < 5 & !fetchingUsers) {
+      setFetchingUsers(true);
+      fetch(`https://randomuser.me/api/?inc=name,picture&nat=us,gb&results=30`)
+      .then(res => res.json())
+      .then(res => {
+        setRandomUsers([...randomUsers, ...res.results]);
+        setFetchingUsers(false);
+      })
+      .catch((e) => setFetchingUsers(false));
+    }
+  }, [randomUsers]);
+
   return (
     <main>
-      <TimeContext.Provider value={{progress: progress}}>
+      <Timer progress={progress} setProgress={setProgress}>
         <FunpageBar followers={followers} gameStarted={gameStarted} history={history} />
         <CSSTransition in={!gameStarted} timeout={200} classNames="welcome-message">
           <WelcomeMessage startGame={startGame} />
         </CSSTransition>
         {gameStarted && <>
           <TransitionGroup className="posts-list" component='ul'>
-            {postsList.map(post => Post({...post, setCommentsCount, commentsCount, followers}))}
+            {postsList.map(post => Post({...post, setCommentsCount, commentsCount, followers, randomUsers, setRandomUsers}))}
           </TransitionGroup>
-          <JokeOptions postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers}/>
+          <JokeOptions jokesList={jokesList} setJokesList={setJokesList} postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers}/>
         </> }
-      </TimeContext.Provider>
+      </Timer>
     </main>
   );
 
   function adjustFollowers(isRight, timePassed) {
-    const newFollowers = Math.max(Math.round(100 - 0.005 * timePassed), 10);
+    let newFollowers = Math.max(Math.round(100 - 0.005 * timePassed), 10);
+    if (!isRight && newFollowers > followers) {
+      newFollowers = followers;
+    }
     if (isRight) {
       setFollowers(followers + newFollowers);
       setHistory([...history, newFollowers].splice(1,5));
     } else {
-      const balance = (followers - newFollowers >= 0) ? followers - newFollowers : 0;
-      
-      setFollowers(balance);
-      setHistory([...history, (balance > 0) ? newFollowers * -1 : 0].splice(1,5));
+      setFollowers(followers - newFollowers);
+      setHistory([...history, newFollowers * -1 ].splice(1,5));
     }
   }
+}
+
+
+function fetchJokes() {
+  return new Promise ((resolve, reject) => {
+    fetch(`https://icanhazdadjoke.com/search?page=${giveRandom(0, 10)}&limit=${giveRandom(40, 50)}`, {
+      headers: {
+        Accept: "application/json"
+      }
+    })
+      .then(res => res.json())
+      .then(res => {
+        if (!createJokesList(res.results)) {
+          resolve(fetchJokes())
+        } else {
+          resolve(createJokesList(res.results));
+        }
+      })
+      .catch(() => reject());
+  })
+}
+
+function createJokesList(json) {
+  let jokes = [];
+  for (let joke of json) {
+    let jokeSplit = joke.joke.match( /[^.!?]+[.!?]+/g );
+    if (jokeSplit && jokeSplit.length === 2) {
+      jokes.push({setup: jokeSplit[0], punchline: jokeSplit[1]});
+    }
+  }
+  jokes = jokes.slice(0, Math.floor(jokes.length / 5) * 5)
+  return (jokes.length >= 5) ? shuffle(jokes) : false;
+}
+
+
+function Timer(props) {
+  useEffect(() => {
+    const interval = setInterval(() => {
+      props.setProgress(progress => progress + 1);
+    }, 2000);
+    return () => {
+      clearInterval(interval);
+    };
+  }, [props]);
+
+  return (
+    <TimeContext.Provider value={{progress: props.progress}}>
+      {props.children}
+    </TimeContext.Provider>
+  )
 }
 
 function FunpageBar(props) {
@@ -179,30 +260,35 @@ function TrendingStatus(props) {
         max: -250,
         desc: "Going down!",
         class: 'very-bad',
+        emoji: "😖",
       },
       {
         min: -249,
         max: -100,
         desc: "Losing followers",
         class: 'bad',
+        emoji: "😧",
       },
       {
         min: -99,
         max: 100,
         desc: "",
         class: 'neutral',
+        emoji: "",
       },
       {
         min: 101,
         max: 300,
         desc: "Trending!",
         class: 'good',
+        emoji: "😂",
       },
       {
         min: 301,
         max: Infinity,
         desc: "Going viral!",
         class: 'very-good',
+        emoji: "🤣",
       },
     ]
     for (let range of statusTable) {
@@ -213,8 +299,9 @@ function TrendingStatus(props) {
   }, [props.history]);
   return (
     <>
-      <p className={"funpage-bar__trending-note funpage-bar__trending-note--" + status.class}>{status.desc}</p>
-      <img src={arrow} alt="An icon of arrow indicating if the funpage is trending." className={"funpage-bar__trending-icon funpage-bar__trending-icon--" + status.class}/>
+      <p className={"funpage-bar__trending-note funpage-bar__trending-note--" + status.class}>
+        <span className="funpage-bar__emoji">{status.emoji}</span> {status.desc}
+      </p>
     </>
   )
 }
@@ -238,8 +325,8 @@ function Post(props) {
         </div>
         </div>
         <TransitionGroup className="post__comments-list" component='ul'>
-          <Comment id={props.id} isRight={props.isRight} commentsCount={props.commentsCount} setCommentsCount={props.setCommentsCount} order={1}/>
-          <Comment id={props.id} isRight={props.isRight} commentsCount={props.commentsCount} setCommentsCount={props.setCommentsCount} order={2}/>
+          <Comment id={props.id} isRight={props.isRight} randomUsers={props.randomUsers} setRandomUsers={props.setRandomUsers} commentsCount={props.commentsCount} setCommentsCount={props.setCommentsCount} order={1}/>
+          <Comment id={props.id} isRight={props.isRight} randomUsers={props.randomUsers} setRandomUsers={props.setRandomUsers} commentsCount={props.commentsCount} setCommentsCount={props.setCommentsCount} order={2}/>
         </TransitionGroup>
       </li>
     </CSSTransition>
@@ -250,7 +337,7 @@ function HeartsCounter(props) {
   const [hearts, setHearts] = useState(0);
   useEffect(() => {
     setHearts((props.isRight) ? giveRandom(15, 50) : giveRandom(0, 7));
-  }, []);
+  }, [props.isRight]);
   return (
     <p className="post__hearts-counter"><CountUp duration={3} easingFn={function (t, b, c, d) {
       return -c/2 * (Math.cos(Math.PI*t/d) - 1) + b;
@@ -311,15 +398,12 @@ function Comment(props) {
       return undefined;
     }
     setCreationTime(Date.now());
-    fetch(`https://randomuser.me/api/?inc=name,picture&nat=us,gb`)
-      .then(res => res.json())
-      .then(res => {
-        setTimeout(() => {
-          setCommentText((props.isRight) ? GOOD_COMMENTS[giveRandom(0, GOOD_COMMENTS.length)] : BAD_COMMENTS[giveRandom(0, BAD_COMMENTS.length)]);
-          setComment(res.results[0]);
-          props.setCommentsCount({...props.commentsCount, [props.id]: props.order});
-        }, Math.max(creationTime + 1000 + props.order * 500 - Date.now(), 0), res)
-      });
+    setTimeout(() => {
+      setCommentText((props.isRight) ? GOOD_COMMENTS[giveRandom(0, GOOD_COMMENTS.length)] : BAD_COMMENTS[giveRandom(0, BAD_COMMENTS.length)]);
+      setComment(props.randomUsers[props.order - 1]);
+      props.setRandomUsers(props.randomUsers.slice(props.order));
+      props.setCommentsCount({...props.commentsCount, [props.id]: props.order});
+    }, Math.max(creationTime + 1000 + props.order * 500 - Date.now(), 0))
   }, []);
   return (!comment) ? (null) : (
     <>
@@ -343,15 +427,14 @@ function JokeOptions(props) {
   const [transitionTime, setTransitionTime] = useState(Date.now());
 
   useEffect(() => {
-    fetchJokes()
-      .then(res => {setTimeout((res) => {
+      setTimeout(() => {
         setJokesOrder(shuffle([0, 1, 2, 3, 4]));
-        setJokes(res);
+        setJokes(props.jokesList.slice(0, 5));
+        props.setJokesList(props.jokesList.slice(5));
         setReady(true);
         jokesMasonry(document.querySelectorAll(".new-post__punchline"));
         setRenderedAt(Date.now());
-      }, Math.max(transitionTime + 1000 - Date.now(), 0), res)
-    })
+      }, Math.max(transitionTime + 1000 - Date.now(), 0));
   }, [props.postID]);
 
   return (
@@ -378,11 +461,11 @@ function JokeOptions(props) {
           </ul>
         </>
       }
-      <button className="new-post__add-post-button" disabled={chosenJoke === false} onClick={() => checkPunchline(chosenJoke)}>+</button>
+      <button className="new-post__add-post-button" disabled={chosenJoke === false} onClick={() => choosePunchline(chosenJoke)}>+</button>
     </section>
   )
 
-  function checkPunchline(num) {
+  function choosePunchline(num) {
     setChosenJoke(false);
     const timePassed = Date.now() - renderedAt;
     const isRight = (jokesList[0] === jokesList[jokesOrder[num]]);
@@ -407,15 +490,17 @@ function JokeOptions(props) {
 }
 
 function jokesMasonry(elems) {
-  let elemsArr = Array.from(elems)
-  const colWidth = document.querySelector(".new-post__punchlines-list").offsetWidth;
-  let counter = 0;
-  while (elemsArr.length > 0) {
-    const newLine = createLine(elemsArr, [], colWidth)[1];
-    for (let i = 0; i < newLine.length; i++, counter++) {
-      newLine[i].style.order = counter;
-      newLine[i].children[0].setAttribute("tabindex", counter + 1);
-      elemsArr = elemsArr.filter(item => item !== newLine[i])
+  if (document.querySelector(".new-post__punchlines-list")) {
+    let elemsArr = Array.from(elems)
+    const colWidth = document.querySelector(".new-post__punchlines-list").offsetWidth;
+    let counter = 0;
+    while (elemsArr.length > 0) {
+      const newLine = createLine(elemsArr, [], colWidth)[1];
+      for (let i = 0; i < newLine.length; i++, counter++) {
+        newLine[i].style.order = counter;
+        newLine[i].children[0].setAttribute("tabindex", counter + 1);
+        elemsArr = elemsArr.filter(item => item !== newLine[i])
+      }
     }
   }
 }
@@ -457,37 +542,6 @@ function shuffle(array) {
 
 function capFirstLetter(string) {
   return string.charAt(0).toUpperCase() + string.slice(1);
-}
-
-function fetchJokes() {
-  return new Promise ((resolve, reject) => {
-    fetch(`https://icanhazdadjoke.com/search?page=${giveRandom(0, 50)}&limit=${giveRandom(9, 11)}`, {
-      headers: {
-        Accept: "application/json"
-      }
-    })
-      .then(res => res.json())
-      .then(res => {
-        if (!createJokesList(res.results)) {
-          resolve(fetchJokes())
-        } else {
-          resolve(createJokesList(res.results))
-        }
-      })
-  })
-}
-
-function createJokesList(json) {
-  let jokes = [];
-  for (let joke of json) {
-    let jokeSplit = joke.joke.match( /[^.!?]+[.!?]+/g );
-    if (jokeSplit && jokeSplit.length === 2) {
-      if (jokes.push({setup: jokeSplit[0], punchline: jokeSplit[1]}) === 5) {
-        break;
-      }
-    }
-  }
-  return (jokes.length === 5) ? shuffle(jokes) : false;
 }
 
 function giveRandom(min, max) {

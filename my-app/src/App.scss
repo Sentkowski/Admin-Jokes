@@ -91,12 +91,21 @@ main {
   }
 }
 
+.funpage-bar__emoji {
+  font-size: 1rem;
+}
+
 .funpage-bar__trending-note {
+  display: block;
   font-size: 0.875rem;
   font-family: $sans;
   align-self: flex-end;
   text-align: right;
   margin-left: 4px;
+
+  &::first-letter {
+    font-size: 1.25;
+  }
 }
 
 .funpage-bar__trending-note--very-bad {
@@ -113,40 +122,6 @@ main {
 
 .funpage-bar__trending-note--very-good {
   color: $secondary-color-dark;
-}
-
-.funpage-bar__trending-icon {
-  position: absolute;
-  z-index: -1;
-  width: 96px;
-  height: 96px;
-  right: 32px;
-  bottom: -16px;
-  opacity: 0.10;
-  transition: transform 0.2s;
-}
-
-.funpage-bar__trending-icon--bad {
-  transform: scale(-1, -1);
-  animation: puls 1s alternate-reverse infinite; 
-}
-
-.funpage-bar__trending-icon--neutral {
-  transform: rotate(15deg);
-}
-
-.funpage-bar__trending-icon--very-bad {
-  transform: scale(-1, -1);
-  animation: pulse 1s alternate-reverse infinite; 
-}
-
-.funpage-bar__trending-icon--very-good {
-  animation: pulse 1s alternate-reverse infinite; 
-}
-
-@keyframes pulse {
-  from {opacity: 0.1;}
-  to {opacity: 0.2;}
 }
 
 .funpage-bar__followers-number {
@@ -178,7 +153,7 @@ main {
   padding: 8px;
   width: 90%;
   margin: auto;
-  border-right: 4px solid $secondary-color;
+  box-shadow: 4px 4px 0 $primary-color-dark;
 }
 
 .post__header {
@@ -235,37 +210,10 @@ main {
   display: flex;
   padding: 4px 8px;
   background-color: $primary-color;
-  border-radius: 0 0 8px 8px;
   font-size: 1rem;
   font-family: $sans;
   color: $text-color;
-
-  &::after {
-    content: "";
-    display: block;
-    position: absolute;
-    top: -0.5px;
-    right: -11.5px;
-    width: 12px;
-    height: 100%;
-    background-image: url("./counter-corner.svg");
-    background-size: contain;
-    background-repeat: no-repeat;
-  }
-
-  &::before {
-    content: "";
-    display: block;
-    position: absolute;
-    top: -0.5px;
-    left: -11.5px;
-    width: 12px;
-    height: 100%;
-    background-image: url("./counter-corner.svg");
-    background-size: contain;
-    background-repeat: no-repeat;
-    transform: scaleX(-1);
-  }
+  box-shadow: 4px 4px 0 $primary-color-dark;
 }
 
 .post__heart-icon {
@@ -316,10 +264,11 @@ main {
   max-width: 500px;
   background-color: $primary-color;
   padding: 5px 10px;
-  box-shadow: 5px 5px 0 $secondary-color-light;
+  box-shadow: 3px 3px 0 $primary-color-dark;
   opacity: 0;
   transform: translateX(50px);
   animation: fadeInRight 0.5s 0.7s forwards;
+  border-left: 3px solid $secondary-color-light;
 
   &:first-child {
     margin-top: 40px;
@@ -417,10 +366,10 @@ main {
 .comment {
   position: relative;
   display: flex;
-  margin: 20px 0;
+  margin: 20px 0 15px;
   background-color: $primary-color;
   padding: 5px 10px 5px 5px;
-  box-shadow: 4px 4px 0 $secondary-color-light;
+  box-shadow: 3px 3px 0  $primary-color-dark;
   opacity: 0;
   transform: translate(25px, 10px);
   animation: fadeInBottomRight 0.5s forwards;
@@ -434,7 +383,6 @@ main {
     height: 15px;
     background-image: url("./quot_marks.svg");
     background-size: cover;
-    opacity: 0.5;
   }
 
   @media only screen and (min-width: 700px) {
