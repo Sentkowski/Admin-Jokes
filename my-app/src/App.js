@@ -2,7 +2,10 @@ import React, { useState, useEffect, useContext } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import CountUp from 'react-countup';
 import './App.scss';
-import funpageAvatar from './funpage_avatar.jpg';
+import avatarMedieval from './avatars/avatar_medieval.jpg';
+import avatarDog from './avatars/avatar_dog.jpg';
+import avatarLenny from './avatars/avatar_lenny.png';
+import avatarBoy from './avatars/avatar_boy.jpg';
 import heartIcon from './heart-black.svg';
 
 const TimeContext = React.createContext({ progress: 0 });
@@ -54,7 +57,7 @@ const BAD_COMMENTS = [
   "looks like someone is going to lose followers ;) ;) ;)",
   "delete this",
   "srsly delete this",
-  "Do you just copy-paste random words?",
+  "Do you just copy-paste random sentences?",
   "This page used to be so much better...",
   "Can i report this spam somehow?",
   "fp got hacked :O",
@@ -78,7 +81,7 @@ function Feed() {
   const [progress, setProgress] = useState(0);
   const [randomUsers, setRandomUsers] = useState([]);
   const [fetchingUsers, setFetchingUsers] = useState(false);
-  const [postID, setPostID] = useState(giveRandom(100, 200));
+  const [postID, setPostID] = useState(0);
   const [postsList, addPost] = useState([]);
   const [commentsCount, setCommentsCount] = useState({});
   const [followers, setFollowers] = useState(0);
@@ -86,6 +89,8 @@ function Feed() {
   const [gameStarted, startGame] = useState(false);
   const [jokesList, setJokesList] = useState([]);
   const [fetchingJokes, setFetchingJokes] = useState(false);
+  const [avatar, setAvatar] = useState(avatarMedieval);
+  const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   useEffect(() => {
     if (jokesList.length <= 10 && !fetchingJokes) {
@@ -124,13 +129,14 @@ function Feed() {
   return (
     <main>
       <Timer progress={progress} setProgress={setProgress}>
-        <FunpageBar followers={followers} gameStarted={gameStarted} history={history} />
+        <AvatarModal showAvatarModal={showAvatarModal} setShowAvatarModal={setShowAvatarModal} setAvatar={setAvatar} avatar={avatar}/>
+        <FunpageBar avatar={avatar} setShowAvatarModal={setShowAvatarModal} followers={followers} gameStarted={gameStarted} history={history} />
         <CSSTransition in={!gameStarted} timeout={200} classNames="welcome-message">
           <WelcomeMessage startGame={startGame} />
         </CSSTransition>
         {gameStarted && <>
           <TransitionGroup className="posts-list" component='ul'>
-            {postsList.map(post => Post({...post, setCommentsCount, commentsCount, followers, randomUsers, setRandomUsers}))}
+            {postsList.map(post => Post({...post, setCommentsCount, commentsCount, followers, randomUsers, setRandomUsers, avatar, setShowAvatarModal}))}
           </TransitionGroup>
           <JokeOptions jokesList={jokesList} setJokesList={setJokesList} postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers}/>
         </> }
@@ -203,10 +209,88 @@ function Timer(props) {
   )
 }
 
+function AvatarModal(props) {
+
+  const [loadingImage, setLoadingImage] = useState(false);
+
+  function hideModal(e = false) {
+    if (!loadingImage && (e.type !== "keydown" || e.keyCode === 27)) {
+      props.setShowAvatarModal(false);
+    }
+  }
+
+  function showImage(file) {
+    setLoadingImage(true);
+    let reader = new FileReader();
+    reader.onload = function(){
+      setLoadingImage(false);
+      props.setAvatar(reader.result);
+      hideModal();
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function chooseAvatar(av) {
+    props.setAvatar(av);
+    hideModal();
+  }
+
+  useEffect(() => {
+    document.addEventListener("keydown", hideModal, false);
+    return () => {
+      document.removeEventListener("keydown", hideModal, false)
+    };
+  });
+
+  return (
+    <>
+      <CSSTransition in={props.showAvatarModal} timeout={300} unmountOnExit classNames={"avatar-modal__background-"}>
+        <div onClick={hideModal} className="avatar-modal__background"></div>
+      </CSSTransition>
+      <CSSTransition in={props.showAvatarModal} timeout={300} unmountOnExit classNames={"avatar-modal-"}>
+        <section tabIndex={-1} className="avatar-modal">
+          <h2 className="avatar-modal__heading" >Pick your new avatar!</h2>
+          <ul className="avatar-modal__avatars-list">
+            <li className="avatar-modal__avatar">
+              <img className="avatar-modal__image" src={avatarMedieval} />
+              {(props.avatar === avatarMedieval)
+            ? <button className="avatar-modal__choose-button avatar-modal__choose-button--chosen">Chosen</button>
+            : <button onClick={() => chooseAvatar(avatarMedieval)} className="avatar-modal__choose-button">Choose</button>}
+            </li>
+            <li className="avatar-modal__avatar">
+              <img className="avatar-modal__image" src={avatarBoy} />
+              {(props.avatar === avatarBoy)
+            ? <button className="avatar-modal__choose-button avatar-modal__choose-button--chosen">Chosen</button>
+            : <button onClick={() => chooseAvatar(avatarBoy)} className="avatar-modal__choose-button">Choose</button>}
+            </li>
+            <li className="avatar-modal__avatar">
+              <img className="avatar-modal__image" src={avatarDog} />
+              {(props.avatar === avatarDog)
+            ? <button className="avatar-modal__choose-button avatar-modal__choose-button--chosen">Chosen</button>
+            : <button onClick={() => chooseAvatar(avatarDog)} className="avatar-modal__choose-button">Choose</button>}
+            </li>
+            <li className="avatar-modal__avatar">
+              <img className="avatar-modal__image" src={avatarLenny} />
+              {(props.avatar === avatarLenny)
+            ? <button className="avatar-modal__choose-button avatar-modal__choose-button--chosen">Chosen</button>
+            : <button onClick={() => chooseAvatar(avatarLenny)} className="avatar-modal__choose-button">Choose</button>}
+            </li>
+            <li className="avatar-modal__avatar">
+              <input id="file" className="avatar-modal__file-input" type="file" accept="image/*" onChange={(e) => showImage(e.target.files[0]) } />
+              <label htmlFor="file" className="avatar-modal__file-input-label">{(loadingImage) ? "Loading..." :"Choose from drive"}</label>
+              <small className="avatar-modal__file-input-note">Don't worry, your picture will be seen only by hundreds of completely fake users.</small>
+            </li>
+          </ul>
+        </section>
+      </CSSTransition>
+    </>
+  )
+}
+
 function FunpageBar(props) {
   return (
     <header className="funpage-bar">
-      <img src={funpageAvatar} className="funpage-bar__avatar" alt="Admin's page avatar." />
+      <img tabIndex={0} onKeyDown={(e) => {if(e.keyCode === 13) {props.setShowAvatarModal(true)}}} onClick={() => props.setShowAvatarModal(true)} src={props.avatar} className="funpage-bar__avatar" alt="Admin's page avatar." />
       <div className="funpage-bar__texts-container">
         <h1 className="funpage-bar__name">The funniest Funpage</h1>
         <div className="funpage-bar__bottom-container">
@@ -225,7 +309,7 @@ function WelcomeMessage(props) {
     <section className="welcome-message">
       <div className="welcome-message__container">
         <h2 className="welcome-message__heading">Welcome!</h2>
-        <p className="welcome-message__text">So this is your kingdom. We've set things up for you, but if you wish, <span className="useful-text">you can change this avatar – tap on it</span>.</p>
+        <p className="welcome-message__text">So this is your kingdom. We've set things up for you, but if you wish, you can change this avatar – tap on it. 🎯</p>
         <p className="welcome-message__text welcome-message__text--last">Remember the deal, right?</p>
       </div>
       <ul className="welcome-message__conditions-list">
@@ -236,7 +320,7 @@ function WelcomeMessage(props) {
           <p className="welcome-message__condition-text">Guess what happens if you leave us with&nbsp;0...</p>
         </li>
         <li className="welcome-message__condition">
-          <p className="welcome-message__condition-text">You have 2 weeks.</p>
+          <p className="welcome-message__condition-text">You have ONE week.</p>
         </li>
       </ul>
       <ul></ul>
@@ -312,7 +396,7 @@ function Post(props) {
       <li className='post' key={props.title}>
         <div className="post__container">
           <header className="post__header">
-            <img src={funpageAvatar} className='post__avatar' alt="Admin's page avatar."/>
+            <img onClick={() => props.setShowAvatarModal(true)} src={props.avatar} className='post__avatar' alt="Admin's page avatar."/>
             <h2 className='post__title'>{props.title}</h2>
             <Hashtags text={props.text} />
           </header>
@@ -442,7 +526,7 @@ function JokeOptions(props) {
       {(jokesList.length > 1) &&
         <>
           <p className="new-post__setup">{jokesList[0].setup}</p>
-          <ul  className="new-post__punchlines-list">
+          <ul tabIndex={-1} className="new-post__punchlines-list">
             <li className="new-post__punchline">
               <button className={chosenJoke === 0 ? "new-post__punchlines-button new-post__punchlines-button--chosen" : "new-post__punchlines-button"} onClick={() => setChosenJoke(0)}>{jokesList[jokesOrder[0]].punchline}</button>
             </li>
@@ -461,7 +545,7 @@ function JokeOptions(props) {
           </ul>
         </>
       }
-      <button className="new-post__add-post-button" disabled={chosenJoke === false} onClick={() => choosePunchline(chosenJoke)}>+</button>
+      <button className="new-post__add-post-button" disabled={!chosenJoke} onClick={() => choosePunchline(chosenJoke)}>+</button>
     </section>
   )
 
@@ -491,17 +575,19 @@ function JokeOptions(props) {
 
 function jokesMasonry(elems) {
   if (document.querySelector(".new-post__punchlines-list")) {
+    document.querySelector(".new-post__punchlines-list").focus();
     let elemsArr = Array.from(elems)
-    const colWidth = document.querySelector(".new-post__punchlines-list").offsetWidth;
+    const colWidth = document.querySelector(".new-post__punchlines-list").getBoundingClientRect().width;
     let counter = 0;
     while (elemsArr.length > 0) {
       const newLine = createLine(elemsArr, [], colWidth)[1];
       for (let i = 0; i < newLine.length; i++, counter++) {
         newLine[i].style.order = counter;
-        newLine[i].children[0].setAttribute("tabindex", counter + 1);
+        // newLine[i].children[0].setAttribute("tabIndex", counter + 1);
         elemsArr = elemsArr.filter(item => item !== newLine[i])
       }
     }
+    document.querySelector(".new-post__punchlines-list").focus();
   }
 }
 
@@ -511,7 +597,7 @@ function createLine(allElems, combined, max) {
   for (let otherEl of allElems) {
     if (combined.indexOf(otherEl) === -1) {
       const newComb = [...combined, otherEl]
-      const newWidth = newComb.reduce((acc, currEl) => acc + currEl.offsetWidth, 0);
+      const newWidth = newComb.reduce((acc, currEl) => acc + currEl.getBoundingClientRect().width, 0);
       if (newWidth <= max) {
         const results = createLine(allElems, newComb, max);
         posWidths.push(results[0]);
