@@ -46,7 +46,13 @@ main {
   width: 100%;
   max-width: 800px;
   display: flex;
-  background-color: $primary-color-dark;
+  background: repeating-linear-gradient(
+    135deg,
+    white,
+    white 10px,
+    hsl(19.9, 90, 98.3) 10px,
+    hsl(19.9, 90, 98.3) 20px
+  );
   box-shadow: 0px 1px 5px 0px rgba(7, 26, 32, 0.20), 0px 5px 15px 0px rgba(7, 26, 32, 0.05);
   transform: translateX(-50%);
 }
@@ -85,6 +91,33 @@ main {
   color: $heading-color;
 }
 
+.funpage-bar__time-progress {
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 100%;
+  height: 2px;
+  border: 0px solid transparent;
+
+  &::-webkit-progress-bar {
+    background-color: transparent;
+    transition: width 0.1s;
+  }
+  &::-webkit-progress-value {
+    background-color: $secondary-color;
+    transition: width 1s linear;
+  }
+  &::-moz-progress-bar {
+    background-color: $secondary-color;
+  }
+
+  &::-ms-fill {
+    background-color: $secondary-color;
+    transition: width 1s linear;
+    border: none;
+  }
+}
+
 .funpage-bar__admin-note {
   font-size: 0.875rem;
   font-family: $sans;
@@ -108,26 +141,11 @@ main {
   align-self: flex-end;
   text-align: right;
   margin-left: 4px;
+  color: $text-color;
 
   &::first-letter {
     font-size: 1.25;
   }
-}
-
-.funpage-bar__trending-note--very-bad {
-  color: $secondary-color-dark;
-}
-
-.funpage-bar__trending-note--bad {
-  color: $secondary-color-dark;
-}
-
-.funpage-bar__trending-note--good {
-  color: $secondary-color-dark;
-}
-
-.funpage-bar__trending-note--very-good {
-  color: $secondary-color-dark;
 }
 
 .funpage-bar__followers-number {
@@ -316,7 +334,6 @@ main {
   from {
     opacity: 0;
     transform: translateY(-10px);
-
   }
   to {
     opacity: 1;
@@ -441,8 +458,8 @@ main {
     45deg,
     white,
     white 10px,
-    hsl(180, 100, 98.0) 10px,
-    hsl(180, 100, 98.0) 20px
+    hsl(180, 100, 99) 10px,
+    hsl(180, 100, 99) 20px
   );
 
   @media only screen and (min-width: 700px) {
@@ -455,8 +472,8 @@ main {
       45deg,
       white,
       white 10px,
-      hsl(180, 100, 97.0) 10px,
-      hsl(180, 100, 97.0) 20px
+      hsl(180, 100, 98.0) 10px,
+      hsl(180, 100, 98.0) 20px
     );
   }
 }
@@ -604,12 +621,11 @@ main {
 }
 
 
-.avatar-modal__background {
+.avatar-modal__background, .modal__background, .game-over-message__background {
   position: fixed;
   top:0;
   left: 0;
   z-index: 2;
-  content: "";
   display: block;
   width: 100%;
   height: 100%;
@@ -694,38 +710,127 @@ main {
   line-height: 1.2;
 }
 
-.avatar-modal__background--exit {
+.modal__background--exit {
   opacity: 1;
 }
-.avatar-modal__background--exit-active {
+.modal__background--exit-active {
   opacity: 0;
   transition: opacity 300ms;
 }
-.avatar-modal__background--exit-done {
+.modal__background--exit-done {
   display: none;
 }
-.avatar-modal__background--enter {
+.modal__background--enter {
   opacity: 0;
 }
-.avatar-modal__background--enter-active {
+.modal__background--enter-active {
   opacity: 1;
   transition: opacity 300ms;
 }
 
-.avatar-modal--exit {
-  transform: translateX(0);
+.modal--exit {
+  opacity: 1;
 }
-.avatar-modal--exit-active {
-  transform: translateX(-100%);
-  transition: transform 300ms;
+.modal--exit-active {
+  opacity: 0;
+  transition: opacity 300ms;
 }
-.avatar-modal--exit-done {
+.modal--exit-done {
   display: none;
 }
-.avatar-modal--enter {
-  transform: translateX(-100%);
+.modal--enter {
+  opacity: 0;
 }
-.avatar-modal--enter-active {
-  transform: translateX(0);
-  transition: transform 300ms;
+.modal--enter-active {
+  opacity: 1;
+  transition: opacity 300ms;
+}
+
+.instructions-message {
+  position: absolute;
+  top: 50px;
+  left: 50%;
+  margin: 50px auto;
+  padding: 10px;
+  width: 300px;
+  text-align: center;
+  font-size: 1.375rem;
+  font-family: $sans;
+  line-height: 1.2;
+  color: $heading-color;
+  opacity: 0;
+  transform: translate(-50%, -10px);
+  animation: messageIntro 0.3s 0.3s forwards;
+  background-color: $primary-color;
+  box-shadow: 5px 5px 0 $primary-color-dark;
+}
+
+@keyframes messageIntro {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -10px);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.game-over-message {
+  position: fixed;
+  z-index: 2;
+  top: 50px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 800px;
+  margin: 50px auto;
+  background-color: $primary-color;
+  box-shadow: 4px 4px 0 $secondary-color-dark;
+  padding: 8px;
+}
+
+.game-over-message__heading {
+  font-family: $sans;
+  color: $heading-color;
+  margin: 16px;
+  font-size: 1.5rem;
+  line-height: 1.1;
+}
+
+.game-over-message__important {
+  text-decoration: underline $secondary-color-light wavy;
+}
+
+.game-over-message__text {
+  color: $text-color;
+  font-family: $sans;
+  font-size: 1rem;
+  line-height: 1.2;
+  margin: 24px 16px;
+}
+
+.game-over-message__contact-text {
+  font-family: $sans;
+  font-size: 0.75rem;
+  color: $secondary-text-color;
+  line-height: 1.2;
+  margin: 8px 16px;
+}
+
+.game-over-message__close-button {
+  color: $text-color;
+  display: block;
+  font-family: $sans;
+  font-size: 1rem;
+  margin: 24px 16px 16px auto;
+  padding: 4px 8px;
+  border: 2px solid $primary-color-dark;
+  background-color: #ffffff;
+  cursor: pointer;
+  right: 16px;
+  &:focus {
+    outline: none;
+    box-shadow: 2px 2px 0 $secondary-color-light;
+  }
 }
