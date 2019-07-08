@@ -1,0 +1,21 @@
+{
+  "files": {
+    "main.css": "/Admin-Jokes/static/css/main.6f1e42fe.chunk.css",
+    "main.js": "/Admin-Jokes/static/js/main.9cb4da49.chunk.js",
+    "main.js.map": "/Admin-Jokes/static/js/main.9cb4da49.chunk.js.map",
+    "runtime~main.js": "/Admin-Jokes/static/js/runtime~main.684db663.js",
+    "runtime~main.js.map": "/Admin-Jokes/static/js/runtime~main.684db663.js.map",
+    "static/js/2.83505c5b.chunk.js": "/Admin-Jokes/static/js/2.83505c5b.chunk.js",
+    "static/js/2.83505c5b.chunk.js.map": "/Admin-Jokes/static/js/2.83505c5b.chunk.js.map",
+    "index.html": "/Admin-Jokes/index.html",
+    "precache-manifest.a6a5dfb57578c07afd910e40a6a95c7b.js": "/Admin-Jokes/precache-manifest.a6a5dfb57578c07afd910e40a6a95c7b.js",
+    "service-worker.js": "/Admin-Jokes/service-worker.js",
+    "static/css/main.6f1e42fe.chunk.css.map": "/Admin-Jokes/static/css/main.6f1e42fe.chunk.css.map",
+    "static/media/avatar_boy.jpg": "/Admin-Jokes/static/media/avatar_boy.9f9cbc03.jpg",
+    "static/media/avatar_dog.jpg": "/Admin-Jokes/static/media/avatar_dog.e79ac75a.jpg",
+    "static/media/avatar_lenny.png": "/Admin-Jokes/static/media/avatar_lenny.b80ddd8a.png",
+    "static/media/avatar_medieval.jpg": "/Admin-Jokes/static/media/avatar_medieval.e3fbe543.jpg",
+    "static/media/App.scss": "/Admin-Jokes/static/media/quot_marks.0bd23610.svg",
+    "static/media/heart-black.svg": "/Admin-Jokes/static/media/heart-black.56abafb1.svg"
+  }
+}
