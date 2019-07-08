@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { CSSTransition, TransitionGroup } from 'react-transition-group';
 import './App.scss';
 import avatarMedieval from './avatars/avatar_medieval.jpg';
@@ -77,7 +77,7 @@ function Feed() {
             <WinMessageWithModal setHideState={setNotFinished} />
           ) : (
             <LoseMessageWithModal followers={followers} setHideState={setNotFinished} />))}
-          <CSSTransition in={!gameStarted} timeout={200} classNames="welcome-message">
+          <CSSTransition in={!gameStarted} unmountOnExit timeout={200} classNames="welcome-message">
             <WelcomeMessage startGame={startGame} />
           </CSSTransition>
           {gameStarted && <>
@@ -118,7 +118,7 @@ function fetchJokes() {
       .then(res => res.json())
       .then(res => {
         if (!createJokesList(res.results)) {
-          resolve(fetchJokes())
+          resolve(fetchJokes());
         } else {
           resolve(createJokesList(res.results));
         }
@@ -141,7 +141,7 @@ function createJokesList(json) {
 
 function InstructionsOnEmpty() {
   return (
-      <h2 className="instructions-message">Choose the right punchline to get followers!</h2>
+      <h2 className="instructions-message">Choose the right punchline to get followers – be quick!</h2>
   )
 }
 

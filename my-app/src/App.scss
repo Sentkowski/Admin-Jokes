@@ -462,6 +462,10 @@ main {
     hsl(180, 100, 99) 20px
   );
 
+  &:focus {
+    outline: none;
+  }
+
   @media only screen and (min-width: 700px) {
     width: 700px;
     left: calc(50% - 350px);
@@ -618,6 +622,10 @@ main {
   height: 100vh;
   background-color: $primary-color-light;
   overflow-y: auto;
+
+  &:focus {
+    outline: none;
+  }
 }
 
 
