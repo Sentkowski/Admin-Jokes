@@ -1,13 +1,20 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import Modal from "./Modal";
 import { formatDate } from "../utilities";
+import { TimeContext } from "./Timer"
 
 function WinMessageWithModal(props) {
-    return Modal(WinMessage, props)
+    if (useContext(TimeContext).progress <= 168) {
+        return Modal(WinMessage, props)
+    }
+    return null;
 }
 
 function LoseMessageWithModal(props) {
-    return Modal(LoseMessage, props)
+    if (props.followers < 1000) {
+        return Modal(LoseMessage, props);
+    }
+    return null;
 }
 
 function LoseMessage(props) {
@@ -24,9 +31,10 @@ function LoseMessage(props) {
 }
 
 function WinMessage(props) {
+    const progress = useContext(TimeContext).progress
     const [progressAtWin, setProgressAtWin] = useState(0);
     useEffect(() => {
-        setProgressAtWin(props.progress);
+        setProgressAtWin(progress);
     }, []);
     return (
         <GameOverMessage setModalState={props.setModalState}>

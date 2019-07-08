@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
+import { ModalOpenContext } from "./ModalDetector"
 import { CSSTransition } from 'react-transition-group';
 
 function Modal(ModalBody, props) {
 
     const [modalState, setModalState] = useState(false);
+    useContext(ModalOpenContext).setModalOpen(modalState);
 
     function hideModal(e = false) {
         if (e.type !== "keydown" || e.keyCode === 27) {
