@@ -73,7 +73,7 @@ function Feed() {
         <Timer gameStarted={gameStarted} progress={progress} setProgress={setProgress}>
           {showAvatarModal && <AvatarSelectionWithModal setHideState={setShowAvatarModal} setAvatar={setAvatar} avatar={avatar}/>}
           <FunpageBar avatar={avatar} setShowAvatarModal={setShowAvatarModal} followers={followers} gameStarted={gameStarted} history={history} />
-          {(notFinished && (progress > 168 ||  followers > 100 )) && (followers > 100 ? (
+          {(notFinished && (progress > 168 ||  followers >= 1000 )) && (followers >= 1000 ? (
             <WinMessageWithModal setHideState={setNotFinished} />
           ) : (
             <LoseMessageWithModal followers={followers} setHideState={setNotFinished} />))}
@@ -155,7 +155,7 @@ function WelcomeMessage(props) {
       </div>
       <ul className="welcome-message__conditions-list">
         <li className="welcome-message__condition">
-          <p className="welcome-message__condition-text">Get us to 2000 followers and you're hired.</p>
+          <p className="welcome-message__condition-text">Get us to 1000 followers and you're hired.</p>
         </li>
         <li className="welcome-message__condition">
           <p className="welcome-message__condition-text">Guess what happens if you leave us with&nbsp;0...</p>
