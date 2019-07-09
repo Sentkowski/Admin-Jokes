@@ -67,7 +67,7 @@ function Hashtags(props) {
 }
 
 function ShowDate() {
-    const [datePublished, setDatePublished] = useState(useContext(TimeContext).progress);
+    const [datePublished] = useState(useContext(TimeContext).progress);
     const time = useContext(TimeContext).progress - datePublished;
     return (
         <p className='post__date'>{formatDate(time)}</p>

@@ -9,7 +9,8 @@ import { Timer } from "./components/Timer";
 import FunpageBar from "./components/FunpageBar";
 import JokeOptions from "./components/JokeOptions";
 import { ModalDetector } from "./components/ModalDetector";
-import { shuffle, giveRandom } from "./utilities.js"
+import WelcomeMessage from "./components/WelcomeMessage";
+import { shuffle, giveRandom } from "./utilities.js";
 
 function App() {
   return (
@@ -19,35 +20,48 @@ function App() {
 
 function Feed() {
   const [progress, setProgress] = useState(0);
-  const [randomUsers, setRandomUsers] = useState([]);
-  const [fetchingUsers, setFetchingUsers] = useState(false);
+  const [gameStarted, setGameStarted] = useState(false);
+  const [gameNotFinished, setGameNotFinished] = useState(true);
+
   const [postID, setPostID] = useState(0);
   const [postsList, addPost] = useState([]);
   const [commentsCount, setCommentsCount] = useState({});
   const [followers, setFollowers] = useState(0);
   const [history, setHistory] = useState([0, 0, 0, 0, 0]);
-  const [gameStarted, startGame] = useState(false);
-  const [jokesList, setJokesList] = useState([]);
-  const [fetchingJokes, setFetchingJokes] = useState(false);
   const [avatar, setAvatar] = useState(avatarMedieval);
   const [showAvatarModal, setShowAvatarModal] = useState(false);
-  const [notFinished, setNotFinished] = useState(true);
+
+  // API related
+  const [fetchingJokes, setFetchingJokes] = useState(false);
+  const [fetchingUsers, setFetchingUsers] = useState(false);
+  const [jokesAPIPages, setJokesApiPages] = useState([giveRandom(0, 11)]);
+  const [randomUsers, setRandomUsers] = useState([]);
+  const [jokesList, setJokesList] = useState([]);
+
+  useEffect(() => {
+    if (jokesAPIPages.length < 2) {
+      console.log(1)
+      setJokesApiPages(shuffle(Array.from({length: 10}, (v, k) => k+1)));
+    }
+  })
 
   useEffect(() => {
     if (jokesList.length <= 10 && !fetchingJokes) {
+      console.log(jokesAPIPages)
       setFetchingJokes(true);
-      fetchJokes()
+      fetchJokes(jokesAPIPages.pop())
         .then(res => {
           setJokesList([...jokesList, ...res]);
           setFetchingJokes(false);
         })
         .catch(() => {
+          const setupText = "Woops, looks like the API, I mean the creative process, failed this time. You can...";
           setJokesList([
-            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Restart and hope for better luck."},
-            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Blame the guy who made it."},
-            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Let the guy who made it know that there is a problem! (recommended)."},
-            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Choose this option and try to get followers..."},
-            {setup: "Woops, looks like the API, I mean the creative process, failed this time. You can...", punchline: "Or choose this one. Each gives you 20% chance of being right!"}
+            {setup: setupText, punchline: "Restart and hope for better luck."},
+            {setup: setupText, punchline: "Blame the guy who made it."},
+            {setup: setupText, punchline: "Let the guy who made it know that there is a problem! (recommended)."},
+            {setup: setupText, punchline: "Choose this option and try to get followers..."},
+            {setup: setupText, punchline: "Or choose this one. Each gives you 20% chance of being right!"}
           ]);
           setFetchingJokes(false);
         });
@@ -71,14 +85,14 @@ function Feed() {
     <main>
       <ModalDetector>
         <Timer gameStarted={gameStarted} progress={progress} setProgress={setProgress}>
-          {showAvatarModal && <AvatarSelectionWithModal setHideState={setShowAvatarModal} setAvatar={setAvatar} avatar={avatar}/>}
+          {showAvatarModal && <AvatarSelectionWithModal setHideState={setShowAvatarModal} setAvatar={setAvatar} currentAvatar={avatar}/>}
           <FunpageBar avatar={avatar} setShowAvatarModal={setShowAvatarModal} followers={followers} gameStarted={gameStarted} history={history} />
-          {(notFinished && (progress > 168 ||  followers >= 1000 )) && (followers >= 1000 ? (
-            <WinMessageWithModal setHideState={setNotFinished} />
+          {(gameNotFinished && (progress > 168 ||  followers >= 1000 )) && (followers >= 1000 ? (
+            <WinMessageWithModal setHideState={setGameNotFinished} />
           ) : (
-            <LoseMessageWithModal followers={followers} setHideState={setNotFinished} />))}
+            <LoseMessageWithModal followers={followers} setHideState={setGameNotFinished} />))}
           <CSSTransition in={!gameStarted} unmountOnExit timeout={200} classNames="welcome-message">
-            <WelcomeMessage startGame={startGame} />
+            <WelcomeMessage setGameStarted={setGameStarted} />
           </CSSTransition>
           {gameStarted && <>
             {!postsList.length && <InstructionsOnEmpty />}
@@ -108,9 +122,10 @@ function Feed() {
 }
 
 
-function fetchJokes() {
+function fetchJokes(page) {
+  console.log(page)
   return new Promise ((resolve, reject) => {
-    fetch(`https://icanhazdadjoke.com/search?page=${giveRandom(0, 10)}&limit=${giveRandom(40, 50)}`, {
+    fetch(`https://icanhazdadjoke.com/search?page=${page}&limit=${giveRandom(40, 50)}`, {
       headers: {
         Accept: "application/json"
       }
@@ -142,31 +157,6 @@ function createJokesList(json) {
 function InstructionsOnEmpty() {
   return (
       <h2 className="instructions-message">Choose the right punchline to get followers – be quick!</h2>
-  )
-}
-
-function WelcomeMessage(props) {
-  return (
-    <section className="welcome-message">
-      <div className="welcome-message__container">
-        <h2 className="welcome-message__heading">Welcome!</h2>
-        <p className="welcome-message__text">This is your kingdom, Admin. We've set things up for you, but if you wish, you can change this avatar – tap on it. 🎯</p>
-        <p className="welcome-message__text welcome-message__text--last">Remember the deal, right?</p>
-      </div>
-      <ul className="welcome-message__conditions-list">
-        <li className="welcome-message__condition">
-          <p className="welcome-message__condition-text">Get us to 1000 followers and you're hired.</p>
-        </li>
-        <li className="welcome-message__condition">
-          <p className="welcome-message__condition-text">Guess what happens if you leave us with&nbsp;0...</p>
-        </li>
-        <li className="welcome-message__condition">
-          <p className="welcome-message__condition-text">You have ONE week.</p>
-        </li>
-      </ul>
-      <ul></ul>
-      <button onClick={() => props.startGame(true)} className="welcome-message__start-button">Let the joking begin</button>
-    </section>
   )
 }
 

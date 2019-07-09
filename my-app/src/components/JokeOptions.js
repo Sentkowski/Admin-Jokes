@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useContext } from 'react';
 import { ModalOpenContext } from "./ModalDetector";
+import { giveRandom } from "../utilities.js"
 
 export default function JokeOptions(props) {
     const [jokesList, setJokes] = useState([]);
@@ -7,9 +8,11 @@ export default function JokeOptions(props) {
     const [ready, setReady] = useState(false);
     const [renderedAt, setRenderedAt] = useState();
     const [transitionTime, setTransitionTime] = useState(Date.now());
+    const [setup, setSetup] = useState(giveRandom(0, 5));
 
     useEffect(() => {
         setTimeout(() => {
+            setSetup(giveRandom(0, 5));
             setJokes(props.jokesList.slice(0, 5));
             props.setJokesList(props.jokesList.slice(5));
             setReady(true);
@@ -22,7 +25,7 @@ export default function JokeOptions(props) {
         <section tabIndex={!useContext(ModalOpenContext).open ? -1 : null} className={ready ? "new-post" : "new-post new-post--hidden"}>
             {(jokesList.length > 1) &&
                 <>
-                    <p className="new-post__setup">{jokesList[0].setup}</p>
+                    <p className="new-post__setup">{jokesList[setup].setup}</p>
                     <ul className="new-post__punchlines-list">
                         {jokesList.map((joke, i) => <Punchline key={joke.punchline} order={i} chosenJoke={chosenJoke} setChosenJoke={setChosenJoke} punchline={joke.punchline}/>)}
                     </ul>
@@ -39,11 +42,11 @@ export default function JokeOptions(props) {
     function choosePunchline(num) {
         setChosenJoke(false);
         const timePassed = Date.now() - renderedAt;
-        const isRight = (jokesList[0] === jokesList[num]);
+        const isRight = (jokesList[setup] === jokesList[num]);
         props.adjustFollowers(isRight, timePassed);
         const newPost = {
             title: 'Joke #' + (props.postID + 1) + '!',
-            text: jokesList[0].setup + ' ' + jokesList[num].punchline,
+            text: jokesList[setup].setup + ' ' + jokesList[num].punchline,
             date: 'Just now',
             id: props.postID + 1,
             isRight: isRight,
