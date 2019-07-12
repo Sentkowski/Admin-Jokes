@@ -33,6 +33,10 @@ main {
   width: 100%;
 }
 
+.feed--no-posts {
+  margin-bottom: -250px;
+}
+
 .funpage-bar {
   position: fixed;
   z-index: 1;
@@ -846,4 +850,29 @@ main {
     outline: none;
     box-shadow: 2px 2px 0 $secondary-color-light;
   }
+}
+
+.author-footer {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  margin-top: 80px;
+
+  @media only screen and (min-width: 500px) and (min-height: 650px) {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+  }
+}
+
+.author-footer__text {
+  font-size: 0.825rem;
+  font-family: $sans;
+  color: $secondary-text-color;
+  line-height: 1.2;
+  margin: 0 8px 4px;
+}
+
+.author-footer__link {
+  color: $secondary-text-color;
 }

@@ -10,6 +10,7 @@ import FunpageBar from "./components/FunpageBar";
 import JokeOptions from "./components/JokeOptions";
 import { ModalDetector } from "./components/ModalDetector";
 import WelcomeMessage from "./components/WelcomeMessage";
+import Author from "./components/Author";
 import { shuffle, giveRandom } from "./utilities.js";
 
 function App() {
@@ -40,14 +41,12 @@ function Feed() {
 
   useEffect(() => {
     if (jokesAPIPages.length < 2) {
-      console.log(1)
       setJokesApiPages(shuffle(Array.from({length: 10}, (v, k) => k+1)));
     }
   })
 
   useEffect(() => {
     if (jokesList.length <= 10 && !fetchingJokes) {
-      console.log(jokesAPIPages)
       setFetchingJokes(true);
       fetchJokes(jokesAPIPages.pop())
         .then(res => {
@@ -82,7 +81,7 @@ function Feed() {
   }, [randomUsers]);
 
   return (
-    <main>
+    <main className={!gameStarted ? "feed--no-posts" : ""}>
       <ModalDetector>
         <Timer gameStarted={gameStarted} progress={progress} setProgress={setProgress}>
           {showAvatarModal && <AvatarSelectionWithModal setHideState={setShowAvatarModal} setAvatar={setAvatar} currentAvatar={avatar}/>}
@@ -101,6 +100,7 @@ function Feed() {
             </TransitionGroup>
             <JokeOptions jokesList={jokesList} setJokesList={setJokesList} postID={postID} setPostID={setPostID} postsList={postsList} addPost={addPost} adjustFollowers={adjustFollowers}/>
           </> }
+          {!gameStarted && <Author />}
         </Timer>
       </ModalDetector>
     </main>
@@ -123,7 +123,6 @@ function Feed() {
 
 
 function fetchJokes(page) {
-  console.log(page)
   return new Promise ((resolve, reject) => {
     fetch(`https://icanhazdadjoke.com/search?page=${page}&limit=${giveRandom(40, 50)}`, {
       headers: {
