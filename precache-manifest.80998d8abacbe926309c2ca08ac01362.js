@@ -1,19 +1,19 @@
 self.__precacheManifest = (self.__precacheManifest || []).concat([
   {
-    "revision": "90c95a4873918778375e034a19088e42",
+    "revision": "cb3e10b48c7e3148bebaa77a7177d772",
     "url": "/Admin-Jokes/index.html"
   },
   {
-    "revision": "4ea101b0301f7b7675c3",
-    "url": "/Admin-Jokes/static/css/main.898b7ea2.chunk.css"
+    "revision": "ce3c3d6c2b0299afd775",
+    "url": "/Admin-Jokes/static/css/main.fd74bad4.chunk.css"
   },
   {
     "revision": "e238f51a7ff7bb136c66",
     "url": "/Admin-Jokes/static/js/2.b0774938.chunk.js"
   },
   {
-    "revision": "4ea101b0301f7b7675c3",
-    "url": "/Admin-Jokes/static/js/main.2c149ed3.chunk.js"
+    "revision": "ce3c3d6c2b0299afd775",
+    "url": "/Admin-Jokes/static/js/main.96747ef6.chunk.js"
   },
   {
     "revision": "5ac23639b554f820e75e",
@@ -28,8 +28,8 @@ self.__precacheManifest = (self.__precacheManifest || []).concat([
     "url": "/Admin-Jokes/static/media/avatar_dog.e79ac75a.jpg"
   },
   {
-    "revision": "b80ddd8abc373bcf858475df988f9eb2",
-    "url": "/Admin-Jokes/static/media/avatar_lenny.b80ddd8a.png"
+    "revision": "2ad93a8c42966d0f4c475f1ea375dbff",
+    "url": "/Admin-Jokes/static/media/avatar_lenny.2ad93a8c.png"
   },
   {
     "revision": "e3fbe5434919819d6448d7c2788fcd64",
