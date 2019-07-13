@@ -7,7 +7,7 @@ function Timer(props) {
         if (props.gameStarted) {
             const interval = setInterval(() => {
                 props.setProgress(progress => progress + 1);
-            }, 1000);
+            }, 600);
             return () => {
                 clearInterval(interval);
             };
