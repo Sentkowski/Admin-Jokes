@@ -12,7 +12,7 @@ export default function Post(props) {
             <li className='post' key={props.title}>
                 <div className="post__container">
                     <header className="post__header">
-                        <img onClick={() => props.setShowAvatarModal(true)} src={props.avatar} className='post__avatar' alt="Admin's page avatar." />
+                        <img onClick={() => props.setShowAvatarModal(true)} src={props.avatar.img} className='post__avatar' alt={props.avatar.alt} />
                         <h2 className='post__title'>{props.title}</h2>
                         <Hashtags text={props.text} />
                     </header>

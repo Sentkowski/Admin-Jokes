@@ -7,7 +7,8 @@ function ModalDetector(props) {
 
 
     return (
-        <ModalOpenContext.Provider value={{ open: modalOpen, setModalOpen: setModalOpen }}>
+        <ModalOpenContext.Provider value={{ open: modalOpen, setModalOpen: setModalOpen,
+                                            focus: (modalOpen) ? -1 : 0}}>
             {props.children}
         </ModalOpenContext.Provider>
     )

@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { ModalOpenContext } from "./ModalDetector";
 
 export default function WelcomeMessage(props) {
+    const focusable = useContext(ModalOpenContext).focus;
     return (
         <section className="welcome-message">
             <div className="welcome-message__container">
@@ -20,7 +22,7 @@ export default function WelcomeMessage(props) {
                 </li>
             </ul>
             <ul></ul>
-            <button onClick={() => props.setGameStarted(true)} className="welcome-message__start-button">Let the joking begin</button>
+            <button tabIndex={focusable} onClick={() => props.setGameStarted(true)} className="welcome-message__start-button">Let the joking begin</button>
         </section>
     )
 }

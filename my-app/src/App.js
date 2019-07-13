@@ -29,7 +29,7 @@ function Feed() {
   const [commentsCount, setCommentsCount] = useState({});
   const [followers, setFollowers] = useState(0);
   const [history, setHistory] = useState([0, 0, 0, 0, 0]);
-  const [avatar, setAvatar] = useState(avatarMedieval);
+  const [avatar, setAvatar] = useState({img: avatarMedieval, alt: "Cropped medieval painting of a small child's serious face."});
   const [showAvatarModal, setShowAvatarModal] = useState(false);
 
   // API related

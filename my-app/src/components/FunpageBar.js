@@ -10,8 +10,8 @@ export default function FunpageBar(props) {
     <header className="funpage-bar">
       <img tabIndex={!useContext(ModalOpenContext).open ? 0 : -1}
            onKeyDown={(e) => { if (e.keyCode === 13) { props.setShowAvatarModal(true) } }}
-           onClick={() => props.setShowAvatarModal(true)} src={props.avatar}
-           className="funpage-bar__avatar" alt="Admin's page avatar." />
+           onClick={() => props.setShowAvatarModal(true)} src={props.avatar.img}
+           className="funpage-bar__avatar" alt={props.avatar.alt} />
       <div className="funpage-bar__texts-container">
         <h1 className="funpage-bar__name">The funniest Funpage</h1>
         <div className="funpage-bar__bottom-container">

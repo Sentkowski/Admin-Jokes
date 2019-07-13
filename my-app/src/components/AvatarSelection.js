@@ -13,7 +13,7 @@ function AvatarSelection(props) {
         let reader = new FileReader();
         reader.onload = function () {
             setLoadingImage(false);
-            props.setAvatar(reader.result);
+            props.setAvatar({img: reader.result, alt: "Image uploaded by the user."});
             props.setModalState(false);
         };
         reader.readAsDataURL(file);
@@ -31,7 +31,7 @@ function AvatarSelection(props) {
 
     const avatars = [{img: avatarMedieval, alt: "Cropped medieval painting of a small child's serious face."},
                      {img: avatarBoy, alt: "A laughing boy."},
-                     {img: avatarDog, alt: "A dog weraing sunglasses."},
+                     {img: avatarDog, alt: "A dog wearing sunglasses."},
                      {img: avatarLenny, alt: "Lennyface meme picture."}];
 
     return (
@@ -61,7 +61,7 @@ function AvatarOption(props) {
         <img className="avatar-modal__image" alt={props.avatar.alt} src={props.avatar.img} />
         {(props.currentAvatar === props.avatar.img)
             ? <button className="avatar-modal__choose-button avatar-modal__choose-button--chosen">Chosen</button>
-            : <button onClick={() => props.chooseAvatar(props.avatar.img)} className="avatar-modal__choose-button">Choose</button>}
+            : <button onClick={() => props.chooseAvatar({img: props.avatar.img, alt: props.avatar.alt})} className="avatar-modal__choose-button">Choose</button>}
         </li>
     )
 }
