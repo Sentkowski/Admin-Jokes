@@ -50,8 +50,8 @@ main {
     135deg,
     white,
     white 10px,
-    hsl(19.9, 90, 98.8) 10px,
-    hsl(19.9, 90, 98.8) 20px
+    hsl(180, 100, 98.0) 10px,
+    hsl(180, 100, 98.0) 20px
   );
   box-shadow: 0px 1px 5px 0px rgba(7, 26, 32, 0.20), 0px 5px 15px 0px rgba(7, 26, 32, 0.05);
   transform: translateX(-50%);
@@ -82,7 +82,6 @@ main {
   width: 100%;
   display: flex;
   align-items: flex-end;
-  justify-content: flex-end;
 }
 
 .funpage-bar__name {
@@ -139,7 +138,6 @@ main {
   display: block;
   font-size: 0.875rem;
   font-family: $sans;
-  align-self: flex-end;
   text-align: right;
   margin-left: 4px;
   color: $text-color;
@@ -152,17 +150,8 @@ main {
 .funpage-bar__followers-number {
   font-size: 1.25rem;
   font-family: $sans;
-  align-self: flex-end;
-  margin-left: 8px;
-  margin-right: 36px;
+  margin-right: 8px;
   color: $heading-color;
-}
-
-.funpage-bar__followers-icon {
-  position: absolute;
-  width: 32px;
-  height: 32px;
-  align-self: flex-end;
 }
 
 .posts-list {
@@ -553,7 +542,7 @@ main {
   background-color: $primary-color-dark;
   border-top-left-radius: 8px;
   border-top-right-radius: 8px;
-  color: $secondary-color-dark;
+  color: $text-color;
   transform: scale(1.3);
   transition: color 0.1s, transform 0.1s;
   transform-origin: bottom center;
@@ -570,7 +559,7 @@ main {
   }
 
   &:disabled {
-    color: $heading-color;
+    color: $secondary-text-color;
     transform: scale(1);
     cursor: auto;
   }
@@ -815,10 +804,6 @@ main {
   line-height: 1.1;
 }
 
-.game-over-message__important {
-  text-decoration: underline $secondary-color-light wavy;
-}
-
 .game-over-message__text {
   color: $text-color;
   font-family: $sans;
@@ -829,7 +814,7 @@ main {
 
 .game-over-message__contact-text {
   font-family: $sans;
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: $secondary-text-color;
   line-height: 1.2;
   margin: 8px 16px;

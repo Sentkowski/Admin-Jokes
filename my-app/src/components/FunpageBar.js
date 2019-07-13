@@ -15,10 +15,8 @@ export default function FunpageBar(props) {
       <div className="funpage-bar__texts-container">
         <h1 className="funpage-bar__name">The funniest Funpage</h1>
         <div className="funpage-bar__bottom-container">
-          <p className="funpage-bar__admin-note">Hello, Admin</p>
+          <p className="funpage-bar__followers-number">{props.gameStarted ? <CountUp duration={3} start={(props.followers >= 0) ? props.followers - props.history[4] : 0} end={props.followers} /> : props.followers} followers</p>
           <TrendingStatus history={props.history} />
-          <p className="funpage-bar__followers-number">{props.gameStarted ? <CountUp duration={3} start={(props.followers >= 0) ? props.followers - props.history[4] : 0} end={props.followers} /> : props.followers}</p>
-          <img src={heartIcon} className="funpage-bar__followers-icon" alt="Icon of a heart." />
         </div>
       </div>
       <progress className="funpage-bar__time-progress" value={168 - useContext(TimeContext).progress} max="168"></progress>
